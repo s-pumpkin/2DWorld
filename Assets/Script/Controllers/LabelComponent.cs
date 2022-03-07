@@ -1,0 +1,47 @@
+
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using spumpkin.Helpers;
+using spumpkin.World;
+using spumpkin.Entities;
+using spumpkin.Definitions;
+
+namespace spumpkin.Controllers {
+	[RequireComponent(typeof(TextMeshPro))]
+	public class LabelComponent : MonoBehaviour {
+		private Stackable _stackable;
+		private RectTransform _rt;
+		private TextMeshPro _tm;
+
+		private void Awake() {
+			this.transform.position = new Vector3(0, 0, LayerUtils.Height(Layer.Stackable));
+			this._tm = this.gameObject.GetComponent<TextMeshPro>();
+			this._rt = (RectTransform)this.transform;
+			this._rt.offsetMin = Vector2.zero;
+			this._rt.offsetMax = Vector2.one;
+			this._tm.alignment = TextAlignmentOptions.MidlineGeoAligned;
+			this._tm.fontStyle = FontStyles.Bold;
+			this._tm.fontSize = 4;
+		}
+
+		public void SetStackable(Stackable stackable) {
+			this._stackable = stackable;
+			this._rt.offsetMin = new Vector2(this._stackable.position.x, this._stackable.position.y);
+			this._rt.offsetMax = new Vector2(this._stackable.position.x+1, this._stackable.position.y+1);
+			this._tm.text = this._stackable.inventory.count.ToString();
+		}
+
+		private void Update() {
+			if (this._stackable != null) {
+				if (this._stackable.inventory.count <= 0) {
+					this._tm.text = "";
+					return;
+				}
+
+
+				this._tm.text = this._stackable.inventory.count.ToString();
+			}
+		}
+	}
+}
